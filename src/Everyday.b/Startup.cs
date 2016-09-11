@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Everyday.b.Data;
+using Everyday.b.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Everyday.b
 {
@@ -17,7 +23,8 @@ namespace Everyday.b
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile("config.json", optional: true, reloadOnChange: true);
 
             if (env.IsEnvironment("Development"))
             {
@@ -37,6 +44,15 @@ namespace Everyday.b
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
+            var sqlConnectionString = Configuration.GetConnectionString("DataAccessPostgreSqlProvider");
+            services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(sqlConnectionString)
+            );
+
+            services.Configure<JwtOptions>(option => Configuration.GetSection("JwtOptions").Bind(option));
+            services.AddIdentity();
+
+            //services.AddAuthorization();
             services.AddMvc();
         }
 
@@ -47,8 +63,30 @@ namespace Everyday.b
             loggerFactory.AddDebug();
 
             app.UseApplicationInsightsRequestTelemetry();
-
             app.UseApplicationInsightsExceptionTelemetry();
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("JwtOptions").GetValue<string>("secret")));
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                // The signing key must match!
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+
+                // Validate the JWT Issuer (iss) claim
+                ValidateIssuer = true,
+                ValidIssuer = Configuration.GetSection("JwtOptions").GetValue<string>("Issuer"),
+
+                // Validate the JWT Audience (aud) claim
+                ValidateAudience = true,
+                ValidAudience = Configuration.GetSection("JwtOptions").GetValue<string>("Audience"),
+
+                // Validate the token expiry
+                ValidateLifetime = true,
+
+                // If you want to allow a certain amount of clock drift, set that here:
+                ClockSkew = TimeSpan.Zero
+            };
+            app.UseIdentity(tokenValidationParameters);
 
             app.UseMvc();
         }
