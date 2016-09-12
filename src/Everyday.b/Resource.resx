@@ -125,4 +125,8 @@
     <value>An unknown failure has occurred.</value>
     <comment>Default identity result error message</comment>
   </data>
+  <data name="PwdNotCorrect" xml:space="preserve">
+    <value>User's password not correct.</value>
+    <comment>Wrong password</comment>
+  </data>
 </root>

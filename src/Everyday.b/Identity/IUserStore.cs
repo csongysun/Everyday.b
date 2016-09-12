@@ -9,10 +9,12 @@ using Everyday.b.Models;
 
 namespace Everyday.b.Identity
 {
-    public interface IUserStore
+    public interface IUserStore : IDisposable
     {
         Task<TaskResult> CreateAsync(User user, CancellationToken cancellationToken);
         Task<TaskResult> UpdateAsync(User user, CancellationToken cancellationToken);
-
+        //Task<TaskResult> FindByNameAsync(string userName, CancellationToken cancellationToken);
+        Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken);
+        Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken);
     }
 }

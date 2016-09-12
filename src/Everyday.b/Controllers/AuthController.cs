@@ -30,10 +30,13 @@ namespace Everyday.b.Controllers
             return BadRequest(result.Errors);
         }
 
-        [HttpPost]
-        public void Login([FromBody]string value)
+        [HttpPost("login")]
+        public async Task<ActionResult> Login([FromForm]LoginModel model)
         {
-
+            var result = await _userManager.PasswordSignInAsync(model.UserName, model.Password);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+            return Ok(result.Obj);
         }
 
     }

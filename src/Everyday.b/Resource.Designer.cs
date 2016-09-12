@@ -76,5 +76,14 @@ namespace Everyday.b {
                 return ResourceManager.GetString("DefaultError", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///    查找与 User&apos;s password not correct. 类似的本地化字符串。
+        /// </summary>
+        public static string PwdNotCorrect {
+            get {
+                return ResourceManager.GetString("PwdNotCorrect", resourceCulture);
+            }
+        }
     }
 }

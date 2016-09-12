@@ -65,7 +65,13 @@ namespace Everyday.b
             app.UseApplicationInsightsRequestTelemetry();
             app.UseApplicationInsightsExceptionTelemetry();
 
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("JwtOptions").GetValue<string>("secret")));
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("JwtOptions").GetValue<string>("SecretKey")));
             var tokenValidationParameters = new TokenValidationParameters
             {
                 // The signing key must match!

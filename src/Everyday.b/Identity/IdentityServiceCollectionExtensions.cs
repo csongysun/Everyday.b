@@ -15,6 +15,8 @@ namespace Microsoft.Extensions.DependencyInjection
             //var userType = typeof(UserStore)
             services.AddScoped<IUserStore, UserStore>();
             services.AddScoped<UserManager, UserManager>();
+            services.AddScoped<ITokenProvider,JwtTokenProvider>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
             return services;
         }
     }
