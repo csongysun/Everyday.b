@@ -28,8 +28,9 @@ namespace Everyday.b.Identity
         {
             var claims = new Claim[]
             {
-                new Claim(ClaimTypes.Name,user.UserName),
+                new Claim(ClaimTypes.Name,user.Id),
                 new Claim("SecurityStamp",user.SecurityStamp), 
+                new Claim("Id",user.Id), 
             };
             expireTime = DateTime.Now.AddMinutes(_jwtOptions.Expiration);
             var jwt = new JwtSecurityToken(
@@ -38,8 +39,7 @@ namespace Everyday.b.Identity
                 claims: claims,
                 expires: expireTime,
                 signingCredentials:
-                new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtOptions.SecretKey)),
-                    SecurityAlgorithms.RsaSha256)
+                new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtOptions.SecretKey)),SecurityAlgorithms.HmacSha256)
             );
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }

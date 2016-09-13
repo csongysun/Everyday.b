@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Everyday.b", "src\Everyday.b\Everyday.b.xproj", "{B4323523-921F-422F-BAC1-17269D9056D0}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Everyday.Test", "test\Everyday.Test\Everyday.Test.xproj", "{BCBF4789-9015-4EC3-A585-8BC6AC06752E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{55FBEB17-8341-4279-9473-BC52462E3149}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,11 +26,16 @@ Global
 		{B4323523-921F-422F-BAC1-17269D9056D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4323523-921F-422F-BAC1-17269D9056D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4323523-921F-422F-BAC1-17269D9056D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCBF4789-9015-4EC3-A585-8BC6AC06752E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCBF4789-9015-4EC3-A585-8BC6AC06752E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCBF4789-9015-4EC3-A585-8BC6AC06752E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCBF4789-9015-4EC3-A585-8BC6AC06752E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B4323523-921F-422F-BAC1-17269D9056D0} = {B728377C-9142-4CE9-9566-F8F57F497692}
+		{BCBF4789-9015-4EC3-A585-8BC6AC06752E} = {55FBEB17-8341-4279-9473-BC52462E3149}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Everyday.b.Models
 {
@@ -14,6 +15,9 @@ namespace Everyday.b.Models
         public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
         public int AccessFailedCount { get; set; }
         public DateTimeOffset? LockoutEnd { get; set; }
+
+
+        public List<TodoItem> TodoItems { get; set; }
     }
 
     public class Entity

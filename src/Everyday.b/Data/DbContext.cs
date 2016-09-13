@@ -1,9 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using Everyday.b.Common;
 using Everyday.b.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Everyday.b.Data
 {
@@ -11,9 +14,11 @@ namespace Everyday.b.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<TodoItem> TodoItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -28,6 +33,28 @@ namespace Everyday.b.Data
                 b.Property(u => u.UserName).HasMaxLength(256);
                 b.Property(u => u.Email).HasMaxLength(256);
 
+                b.HasMany(u => u.TodoItems)
+                    .WithOne(t=>t.User)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasForeignKey(t=>t.UserId)
+                    .IsRequired();
+                
+            });
+
+            builder.Entity<TodoItem>(b =>
+            {
+                b.HasKey(t => t.Id);
+                b.HasIndex(t => t.EndDate).HasName("EndDateIndex");
+                b.HasIndex(t => t.BeginDate).HasName("BeginDateIndex");
+                b.Property(t => t.Title).HasMaxLength(256);
+
+                
+
+                //b.HasOne(t => t.User)
+                //    .WithMany(u => u.TodoItems)
+                //    .HasForeignKey(t => t.UserId)
+                //    .IsRequired()
+                //    .OnDelete(DeleteBehavior.Cascade);
             });
 
         }

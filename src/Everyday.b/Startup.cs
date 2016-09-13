@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Everyday.b.Data;
 using Everyday.b.Identity;
+using Everyday.b.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +53,10 @@ namespace Everyday.b
             services.Configure<JwtOptions>(option => Configuration.GetSection("JwtOptions").Bind(option));
             services.AddIdentity();
 
-            //services.AddAuthorization();
+            services.AddScoped<TodoManager>();
+            services.AddScoped<ITodoItemStore, TodoItemStore>();
+
+            services.AddAuthorization();
             services.AddMvc();
         }
 

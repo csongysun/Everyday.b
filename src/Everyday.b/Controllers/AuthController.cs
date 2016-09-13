@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Everyday.b.Controllers
 {
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public class AuthController : Controller
     {
         private readonly UserManager _userManager;
@@ -33,7 +34,7 @@ namespace Everyday.b.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromForm]LoginModel model)
         {
-            var result = await _userManager.PasswordSignInAsync(model.UserName, model.Password);
+            var result = await _userManager.PasswordSignInAsync(model.UserKey, model.Password);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
             return Ok(result.Obj);
