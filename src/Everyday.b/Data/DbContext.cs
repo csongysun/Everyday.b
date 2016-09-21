@@ -19,6 +19,7 @@ namespace Everyday.b.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<TodoItem> TodoItems { get; set; }
+        public DbSet<Check> Checks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -47,14 +48,14 @@ namespace Everyday.b.Data
                 b.HasIndex(t => t.EndDate).HasName("EndDateIndex");
                 b.HasIndex(t => t.BeginDate).HasName("BeginDateIndex");
                 b.Property(t => t.Title).HasMaxLength(256);
+                b.Property(t => t.Updated).HasDefaultValue(DateTime.Now).ValueGeneratedOnAddOrUpdate();
 
-                
+                b.HasMany(t => t.Checks)
+                    .WithOne(c => c.TodoItem)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasForeignKey(c => c.TodoItemId)
+                    .IsRequired();
 
-                //b.HasOne(t => t.User)
-                //    .WithMany(u => u.TodoItems)
-                //    .HasForeignKey(t => t.UserId)
-                //    .IsRequired()
-                //    .OnDelete(DeleteBehavior.Cascade);
             });
 
         }

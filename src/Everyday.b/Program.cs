@@ -15,6 +15,7 @@ namespace Everyday.b
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls("http://0.0.0.0:6666/")
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();

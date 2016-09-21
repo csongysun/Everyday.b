@@ -37,7 +37,14 @@ namespace Everyday.b.Controllers
             var result = await _userManager.PasswordSignInAsync(model.UserKey, model.Password);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
-            return Ok(result.Obj);
+            var user = result.Obj as User;
+            return Ok(new
+            {
+                user.UserName,
+                user.Email,
+                user.Token,
+                user.TokenExpires
+            });
         }
 
     }

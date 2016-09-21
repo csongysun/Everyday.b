@@ -36,5 +36,43 @@ namespace Everyday.b.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public async Task<ActionResult> Today()
+        {
+            var result = await _todoManager.GetTodayItems(User.Identity.Name, DateTime.Today);
+            return Ok(result);
+        }
+        [HttpGet]
+        public async Task<ActionResult> All()
+        {
+            var result = await _todoManager.GetAllItems(User.Identity.Name);
+            return Ok(result);
+        }
+
+        [HttpPost("{itemId}")]
+        public async Task<ActionResult> Check(string itemId,[FromForm] string comment)
+        {
+            var item = await _todoManager.FindById(itemId);
+            if (item == null)
+                return NotFound();
+            var check = item.Checks.FirstOrDefault(c => c.CheckedDate.Date == DateTime.Today);
+            if (check == null)
+            {
+                item.Checks.Add(new Check
+                {
+                    Checked = true,
+                    CheckedDate = DateTime.Today,
+                    Comment = comment,
+                    //TodoItemId = item.Id;
+                });
+            }
+            else
+            {
+                check.Checked = true;
+                check.Comment = comment;
+            }
+
+        }
+
     }
 }

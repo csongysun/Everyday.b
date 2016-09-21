@@ -8,7 +8,7 @@ using Everyday.b.Models;
 
 namespace Everyday.b.Data
 {
-    public class TodoItemStore : ITodoItemStore
+    public class TodoItemStore : ITodoItemStore, ICheckStore
     {
         public ApplicationDbContext Context { get; private set; }
         private bool _disposed;
@@ -17,7 +17,9 @@ namespace Everyday.b.Data
         {
             Context = context;
         }
-        public IQueryable<TodoItem> TodoItems => Context.Set<TodoItem>();
+
+        public IQueryable<TodoItem> TodoItem => Context.Set<TodoItem>();
+
 
         public async Task<TaskResult> Add(string userid, TodoItem item, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -34,6 +36,8 @@ namespace Everyday.b.Data
             return Context.SaveChangesAsync(cancellationToken);
         }
 
+        //public async Task<TaskResult> FindByDate()
+
         protected void ThrowIfDisposed()
         {
             if (_disposed)
@@ -44,6 +48,18 @@ namespace Everyday.b.Data
         public void Dispose()
         {
             _disposed = true;
+        }
+
+        public IQueryable<Check> Checks => Context.Set<Check>();
+        public Task<TaskResult> Check(string itemId)
+        {
+            
+            throw new NotImplementedException();
+        }
+
+        public Task<TaskResult> UnCheck(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
