@@ -54,7 +54,7 @@ namespace Everyday.b.Identity
         public async Task<TaskResult> UpdateAsync(User user, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            //ThrowIfDisposed();
+            ThrowIfDisposed();
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
@@ -69,7 +69,7 @@ namespace Everyday.b.Identity
             }
             catch (DbUpdateConcurrencyException)
             {
-                return TaskResult.Failed(ErrorDescriber.ConcurrencyFailure());
+                return TaskResult.Failed(ErrorDescriber.ConcurrencyFailure);
             }
             return TaskResult.Success;;
         }

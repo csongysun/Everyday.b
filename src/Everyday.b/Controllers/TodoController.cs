@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Everyday.b.Common;
 using Everyday.b.Models;
 using Everyday.b.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -28,8 +29,10 @@ namespace Everyday.b.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Add([FromForm] TodoItem item)
+        public async Task<ActionResult> Add([FromBody] TodoItem item)
         {
+            if (item == null || !ModelState.IsValid)
+                return BadRequest(new[] {ErrorDescriber.ConcurrencyFailure});
             var result = await _todoManager.AddItemAsync(User.Identity.Name, item);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
@@ -49,30 +52,23 @@ namespace Everyday.b.Controllers
             return Ok(result);
         }
 
-        [HttpPost("{itemId}")]
-        public async Task<ActionResult> Check(string itemId,[FromForm] string comment)
+        [HttpGet("{itemId}")]
+        public async Task<ActionResult> Check(string itemId)
         {
-            var item = await _todoManager.FindById(itemId);
-            if (item == null)
-                return NotFound();
-            var check = item.Checks.FirstOrDefault(c => c.CheckedDate.Date == DateTime.Today);
-            if (check == null)
-            {
-                item.Checks.Add(new Check
-                {
-                    Checked = true,
-                    CheckedDate = DateTime.Today,
-                    Comment = comment,
-                    //TodoItemId = item.Id;
-                });
-            }
-            else
-            {
-                check.Checked = true;
-                check.Comment = comment;
-            }
-
+            var result = await _todoManager.Check(itemId);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+            return Ok();
         }
+
+        //[HttpGet("{itemId}")]
+        //public async Task<ActionResult> UnCheck(string itemId)
+        //{
+        //    var result = await _todoManager.UnCheck(itemId);
+        //    if (!result.Succeeded)
+        //        return BadRequest(result.Errors);
+        //    return Ok();
+        //}
 
     }
 }

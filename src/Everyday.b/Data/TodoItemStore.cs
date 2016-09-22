@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Everyday.b.Common;
 using Everyday.b.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Everyday.b.Data
 {
@@ -36,7 +37,48 @@ namespace Everyday.b.Data
             return Context.SaveChangesAsync(cancellationToken);
         }
 
-        //public async Task<TaskResult> FindByDate()
+        public async Task<TaskResult> UpdateAsync(TodoItem item, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            Context.Attach(item);
+            Context.Update(item);
+            try
+            {
+                await SaveChanges(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return TaskResult.Failed(ErrorDescriber.ConcurrencyFailure);
+            }
+            return TaskResult.Success;
+        }
+        public async Task<TaskResult> UpdateAsync(Check check, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (check == null)
+            {
+                throw new ArgumentNullException(nameof(check));
+            }
+
+            Context.Attach(check);
+            Context.Update(check);
+            try
+            {
+                await SaveChanges(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return TaskResult.Failed(ErrorDescriber.ConcurrencyFailure);
+            }
+            return TaskResult.Success;
+        }
 
         protected void ThrowIfDisposed()
         {
@@ -51,15 +93,6 @@ namespace Everyday.b.Data
         }
 
         public IQueryable<Check> Checks => Context.Set<Check>();
-        public Task<TaskResult> Check(string itemId)
-        {
-            
-            throw new NotImplementedException();
-        }
 
-        public Task<TaskResult> UnCheck(string id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

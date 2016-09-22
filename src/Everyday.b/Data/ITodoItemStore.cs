@@ -11,12 +11,13 @@ namespace Everyday.b.Data
     {
         IQueryable<TodoItem> TodoItem { get; }
         Task<TaskResult> Add(string userid, TodoItem item, CancellationToken cancellationToken);
+        Task<TaskResult> UpdateAsync(TodoItem item, CancellationToken cancellationToken);
     }
 
     public interface ICheckStore
     {
         IQueryable<Check> Checks { get; }
-        Task<TaskResult> Check(string itemId);
-        Task<TaskResult> UnCheck(string id);
+        Task<TaskResult> UpdateAsync(Check check, CancellationToken cancellationToken);
+
     }
 }

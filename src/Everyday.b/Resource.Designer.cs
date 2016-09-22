@@ -60,6 +60,15 @@ namespace Everyday.b {
         }
         
         /// <summary>
+        ///    查找与 Can not found check record. 类似的本地化字符串。
+        /// </summary>
+        public static string CheckNotFound {
+            get {
+                return ResourceManager.GetString("CheckNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    查找与 Optimistic concurrency failure, object has been modified. 类似的本地化字符串。
         /// </summary>
         public static string ConcurrencyFailure {
@@ -74,6 +83,24 @@ namespace Everyday.b {
         public static string DefaultError {
             get {
                 return ResourceManager.GetString("DefaultError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    查找与 Can not found todo item 类似的本地化字符串。
+        /// </summary>
+        public static string ItemNotFound {
+            get {
+                return ResourceManager.GetString("ItemNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    查找与 The input model is not valid. 类似的本地化字符串。
+        /// </summary>
+        public static string ModelNotValid {
+            get {
+                return ResourceManager.GetString("ModelNotValid", resourceCulture);
             }
         }
         

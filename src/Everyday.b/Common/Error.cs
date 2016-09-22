@@ -11,24 +11,23 @@ namespace Everyday.b.Common
         public string Description { get; set; }
     }
 
-    public static class ErrorDescriber
+    public static partial class ErrorDescriber
     {
-        public static Error DefaultError()
+        public static Error DefaultError => new Error
         {
-            return new Error
-            {
-                Code = nameof(DefaultError),
-                Description = Resource.DefaultError
-            };
-        }
-        public static Error ConcurrencyFailure()
+            Code = nameof(DefaultError),
+            Description = Resource.DefaultError
+        };
+        public static Error ConcurrencyFailure => new Error
         {
-            return new Error
-            {
-                Code = nameof(ConcurrencyFailure),
-                Description = Resource.ConcurrencyFailure
-            };
-        }
+            Code = nameof(ConcurrencyFailure),
+            Description = Resource.ConcurrencyFailure
+        };
+        public static Error ModelNotValid => new Error
+        {
+            Code = nameof(ModelNotValid),
+            Description = Resource.ModelNotValid
+        };
     }
 
     
