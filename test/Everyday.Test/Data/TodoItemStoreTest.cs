@@ -60,7 +60,7 @@ namespace Everyday.Test.Data
                 var ts = new TodoItemStore(context);
                 var us = new UserStore(context);
                 await us.CreateAsync(user);
-                await ts.Add(user.Id, item);
+                await ts.CreateAsync(user.Id, item);
 
                 var users = context.Users;
 

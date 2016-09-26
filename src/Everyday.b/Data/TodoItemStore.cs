@@ -19,25 +19,53 @@ namespace Everyday.b.Data
             Context = context;
         }
 
-        public IQueryable<TodoItem> TodoItem => Context.Set<TodoItem>();
+        public IQueryable<TodoItem> TodoItems => Context.Set<TodoItem>();
 
 
-        public async Task<TaskResult> Add(string userid, TodoItem item, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<TaskResult> CreateAsync(TodoItem item, 
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            item.UserId = userid;
             Context.Add(item);
             await SaveChanges(cancellationToken);
             return TaskResult.Success;
         }
-        private Task SaveChanges(CancellationToken cancellationToken)
+        public async Task<TaskResult> CreateAsync(Check check,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Context.SaveChangesAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (check == null)
+            {
+                throw new ArgumentNullException(nameof(check));
+            }
+            Context.Add(check);
+            await SaveChanges(cancellationToken);
+            return TaskResult.Success;
+        }
+        public async Task<TaskResult> RemoveByIdAsync<T>(string id,
+            CancellationToken cancellationToken = default(CancellationToken)) where T:Entity
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+            var item = Context.Set<T>().FirstOrDefault(t => t.Id.Equals(id));
+            if (item == null)
+            {
+                return TaskResult.Failed(ErrorDescriber.EntityNotFound);
+            }
+            Context.Set<T>().Remove(item);
+            await SaveChanges(cancellationToken);
+            return TaskResult.Success;
         }
 
-        public async Task<TaskResult> UpdateAsync(TodoItem item, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<TaskResult> UpdateAsync(TodoItem item,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -58,7 +86,8 @@ namespace Everyday.b.Data
             }
             return TaskResult.Success;
         }
-        public async Task<TaskResult> UpdateAsync(Check check, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<TaskResult> UpdateAsync(Check check, 
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -79,6 +108,24 @@ namespace Everyday.b.Data
             }
             return TaskResult.Success;
         }
+
+
+
+        public Task<T> FindById<T>(string id,
+            CancellationToken cancellationToken = default(CancellationToken)) where T:Entity
+        {
+            return Context.Set<T>().FirstOrDefaultAsync(t => t.Id.Equals(id), cancellationToken);
+        }
+        public Task<bool> ContainsById<T>(string id, 
+            CancellationToken cancellationToken = default(CancellationToken)) where T : Entity
+        {
+            return Context.Set<T>().AnyAsync(t => t.Id.Equals(id), cancellationToken);
+        }
+        private Task SaveChanges(CancellationToken cancellationToken)
+        {
+            return Context.SaveChangesAsync(cancellationToken);
+        }
+
 
         protected void ThrowIfDisposed()
         {

@@ -28,14 +28,17 @@ namespace Everyday.b.Identity
         private readonly HttpContext _context;
         private CancellationToken CancellationToken => _context?.RequestAborted ?? CancellationToken.None;
 
-        public async Task<TaskResult> CreateAsync(User user)
+        public async Task<TaskResult> CreateAsync(SignUpModel model)
         {
+            var user = new User
+            {
+                UserName = model.UserName,
+                Email = model.Email
+            };
             var result = await ValidateUser(user);
-
             if (!result.Succeeded)
                 return result;
-
-            user.PasswordHash = _passwordHasher.HashPassword(user.PasswordHash);
+            user.PasswordHash = _passwordHasher.HashPassword(model.Password);
             return await _store.CreateAsync(user, CancellationToken);
         }
 

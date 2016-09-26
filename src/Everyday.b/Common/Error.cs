@@ -28,6 +28,21 @@ namespace Everyday.b.Common
             Code = nameof(ModelNotValid),
             Description = Resource.ModelNotValid
         };
+        public static Error ItemNotFound => new Error
+        {
+            Code = nameof(ItemNotFound),
+            Description = Resource.ItemNotFound
+        };
+        public static Error CheckNotFound => new Error
+        {
+            Code = nameof(CheckNotFound),
+            Description = Resource.CheckNotFound
+        };
+        public static Error EntityNotFound => new Error
+        {
+            Code = nameof(EntityNotFound),
+            Description = Resource.EntityNotFound
+        };
     }
 
     

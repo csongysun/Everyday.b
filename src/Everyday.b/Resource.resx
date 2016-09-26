@@ -128,6 +128,9 @@
     <value>An unknown failure has occurred.</value>
     <comment>Default identity result error message</comment>
   </data>
+  <data name="EntityNotFound" xml:space="preserve">
+    <value>Can not found the Entity.</value>
+  </data>
   <data name="ItemNotFound" xml:space="preserve">
     <value>Can not found todo item</value>
     <comment>No this item</comment>
@@ -138,5 +141,8 @@
   <data name="PwdNotCorrect" xml:space="preserve">
     <value>User's password not correct.</value>
     <comment>Wrong password</comment>
+  </data>
+  <data name="StoreNotICheckStore" xml:space="preserve">
+    <value>Not ICheckStore.</value>
   </data>
 </root>

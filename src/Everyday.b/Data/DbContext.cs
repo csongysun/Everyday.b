@@ -48,7 +48,7 @@ namespace Everyday.b.Data
                 b.HasIndex(t => t.EndDate).HasName("EndDateIndex");
                 b.HasIndex(t => t.BeginDate).HasName("BeginDateIndex");
                 b.Property(t => t.Title).HasMaxLength(256);
-                b.Property(t => t.Updated).HasDefaultValue(DateTime.Now).ValueGeneratedOnAddOrUpdate();
+               //b.Property(t => t.Updated).HasDefaultValue(DateTime.Now).ValueGeneratedOnAddOrUpdate();
 
                 b.HasMany(t => t.Checks)
                     .WithOne(c => c.TodoItem)
@@ -57,7 +57,12 @@ namespace Everyday.b.Data
                     .IsRequired();
 
             });
-
+            builder.Entity<Check>(b =>
+            {
+                b.HasKey(c => c.Id);
+                b.HasAlternateKey(c => new {c.TodoItemId, c.CheckedDate});
+                
+            });
         }
     }
 }

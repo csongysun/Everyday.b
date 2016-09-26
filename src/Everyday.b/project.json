@@ -1,9 +1,6 @@
 {
   "dependencies": {
-    "Microsoft.NETCore.App": {
-      "version": "1.0.0",
-      "type": "platform"
-    },
+    "Microsoft.NETCore.App": "1.0.1",
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.0",
     "Microsoft.AspNetCore.Mvc": "1.0.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
@@ -60,11 +57,9 @@
       "web.config"
     ]
   },
-
   "commands": {
-  "web": "Microsoft.AspNet.Server.Kestrel --server.urls=http://localhost:6666;http://192.168.31.97:6666;"
-},
-
+    "web": "Microsoft.AspNet.Server.Kestrel --server.urls=http://localhost:6666;http://192.168.31.97:6666;"
+  },
   "scripts": {
     "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
   }

@@ -22,71 +22,65 @@ namespace Everyday.b.Services
 
         private CancellationToken CancellationToken => CancellationToken.None;
 
-        public async Task<TaskResult> AddItemAsync(string id, TodoItem item)
+        public async Task<TaskResult> AddItemAsync(string userId, TodoItem item)
         {
-
-            return await _store.Add(id, item, CancellationToken);
+            item.Id = Guid.NewGuid().ToString();
+            item.UserId = userId;
+            return await _store.CreateAsync(item, CancellationToken);
+        }
+        public async Task<TaskResult> DeleteItemAsync(string itemId)
+        {
+            
+            return await _store.RemoveByIdAsync<TodoItem>(itemId, CancellationToken);
         }
 
         public async Task<IList<TodoItem>> GetTodayItems(string id, DateTime date)
         {
             return
                 await
-                    _store.TodoItem.Where(t => t.UserId == id && t.BeginDate.Date <= date.Date && t.EndDate.Date >= date.Date)
+                    _store.TodoItems.Where(t => t.UserId == id && t.BeginDate.Date <= date.Date && t.EndDate.Date >= date.Date)
                         .Include(t => t.Checks)
                         .ToListAsync(CancellationToken);
         }
 
         public async Task<IList<TodoItem>> GetAllItems(string id)
         {
-            return await _store.TodoItem.Where(t => t.UserId == id)
+            return await _store.TodoItems.Where(t => t.UserId == id)
                 .Include(t => t.Checks)
                 .ToListAsync(CancellationToken);
         }
 
-        public async Task<TodoItem> FindById(string id)
-        {
-            return await _store.TodoItem.Include(t => t.Checks).FirstOrDefaultAsync(t => t.Id == id, CancellationToken);
-        }
-
         public async Task<TaskResult> Check(string itemId)
         {
-            var item = await FindById(itemId);
-            if (item == null)
-                return TodoResult.ItemNotFound;
-            var check = item.Checks.FirstOrDefault(c => c.CheckedDate.Date == DateTime.Today);
-            if (check == null)
+            var checkStore = GetCheckStore();
+            var nday = DateTime.Today + TimeSpan.FromDays(1);
+            var exist = checkStore.Checks.Any(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday);
+            Check check;
+            if (!exist)
             {
-                item.Checks.Add(new Check
+                if (!await _store.ContainsById<TodoItem>(itemId, CancellationToken))
+                    return TodoResult.ItemNotFound;
+                check = new Check
                 {
                     Checked = true,
                     CheckedDate = DateTime.Today,
-                    //TodoItemId = item.Id;
-                });
+                    TodoItemId = itemId
+                };
+                return await checkStore.CreateAsync(check, CancellationToken);
             }
-            else
-            {
-                check.Checked = !check.Checked;
-            }
-            return await _store.UpdateAsync(item, CancellationToken);
+            check = checkStore.Checks.First(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday);
+            check.Checked = !check.Checked;
+            return await checkStore.UpdateAsync(check, CancellationToken);
         }
 
-        public async Task<TaskResult> UnCheck(string itemId)
+        private ICheckStore GetCheckStore()
         {
-            //var checkStore = _store as ICheckStore;
-            //Check check = null;
-            //if (checkStore != null)
-            //{
-            //    check = checkStore.Checks.FirstOrDefault(c => c.CheckedDate.Date == DateTime.Today);
-            //}
-
-            var item = await FindById(itemId);
-            if (item == null)
-                return TodoResult.ItemNotFound;
-            var check = item.Checks.FirstOrDefault(c => c.CheckedDate.Date == DateTime.Today);
-            if (check == null) return TodoResult.CheckNotFound;
-            check.Checked = false;
-            return await _store.UpdateAsync(item, CancellationToken);
+            var cast = _store as ICheckStore;
+            if (cast == null)
+            {
+                throw new NotSupportedException(Resource.StoreNotICheckStore);
+            }
+            return cast;
         }
 
         public class TodoResult : TaskResult<TodoItem>
@@ -97,18 +91,5 @@ namespace Everyday.b.Services
                 => new TodoResult { Errors = new List<Error> { ErrorDescriber.CheckNotFound } };
         }
 
-        public static partial class ErrorDescriber
-        {
-            public static Error ItemNotFound => new Error
-            {
-                Code = nameof(ItemNotFound),
-                Description = Resource.ItemNotFound
-            };
-            public static Error CheckNotFound => new Error
-            {
-                Code = nameof(CheckNotFound),
-                Description = Resource.CheckNotFound
-            };
-        }
     }
 }

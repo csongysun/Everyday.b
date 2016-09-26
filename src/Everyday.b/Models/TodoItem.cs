@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Everyday.b.Models
 {
@@ -19,7 +20,6 @@ namespace Everyday.b.Models
         public List<Check> Checks { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
-        public DateTime Updated { get; set; }
     }
 
     public class Check :Entity
@@ -28,6 +28,7 @@ namespace Everyday.b.Models
         public bool Checked { get; set; } = false;
         public string Comment { get; set; }
         public string TodoItemId { get; set; }
+        [JsonIgnore]
         public TodoItem TodoItem { get; set; }
     }
 }

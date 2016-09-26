@@ -32,11 +32,22 @@ namespace Everyday.b.Controllers
         public async Task<ActionResult> Add([FromBody] TodoItem item)
         {
             if (item == null || !ModelState.IsValid)
-                return BadRequest(new[] {ErrorDescriber.ConcurrencyFailure});
+                return BadRequest(new[] {ErrorDescriber.ModelNotValid});
             var result = await _todoManager.AddItemAsync(User.Identity.Name, item);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
-            return Ok();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string itemId)
+        {
+            var result = await _todoManager.DeleteItemAsync(itemId);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return NoContent();
         }
 
         [HttpGet]
@@ -58,17 +69,8 @@ namespace Everyday.b.Controllers
             var result = await _todoManager.Check(itemId);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
-            return Ok();
+            return NoContent();
         }
-
-        //[HttpGet("{itemId}")]
-        //public async Task<ActionResult> UnCheck(string itemId)
-        //{
-        //    var result = await _todoManager.UnCheck(itemId);
-        //    if (!result.Succeeded)
-        //        return BadRequest(result.Errors);
-        //    return Ok();
-        //}
 
     }
 }

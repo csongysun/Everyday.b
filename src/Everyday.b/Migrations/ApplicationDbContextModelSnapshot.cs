@@ -19,17 +19,20 @@ namespace Everyday.b.Migrations
                 {
                     b.Property<string>("Id");
 
+                    b.Property<bool>("Checked");
+
                     b.Property<DateTime>("CheckedDate");
 
                     b.Property<string>("Comment");
 
-                    b.Property<string>("TodoItemId");
+                    b.Property<string>("TodoItemId")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
                     b.HasIndex("TodoItemId");
 
-                    b.ToTable("Check");
+                    b.ToTable("Checks");
                 });
 
             modelBuilder.Entity("Everyday.b.Models.TodoItem", b =>
@@ -41,6 +44,7 @@ namespace Everyday.b.Migrations
                     b.Property<DateTime>("EndDate");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 256);
 
                     b.Property<string>("UserId")
@@ -100,9 +104,10 @@ namespace Everyday.b.Migrations
 
             modelBuilder.Entity("Everyday.b.Models.Check", b =>
                 {
-                    b.HasOne("Everyday.b.Models.TodoItem")
+                    b.HasOne("Everyday.b.Models.TodoItem", "TodoItem")
                         .WithMany("Checks")
-                        .HasForeignKey("TodoItemId");
+                        .HasForeignKey("TodoItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Everyday.b.Models.TodoItem", b =>

@@ -87,6 +87,15 @@ namespace Everyday.b {
         }
         
         /// <summary>
+        ///    查找与 Can not found the Entity. 类似的本地化字符串。
+        /// </summary>
+        public static string EntityNotFound {
+            get {
+                return ResourceManager.GetString("EntityNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    查找与 Can not found todo item 类似的本地化字符串。
         /// </summary>
         public static string ItemNotFound {
@@ -110,6 +119,15 @@ namespace Everyday.b {
         public static string PwdNotCorrect {
             get {
                 return ResourceManager.GetString("PwdNotCorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    查找与 Not ICheckStore. 类似的本地化字符串。
+        /// </summary>
+        public static string StoreNotICheckStore {
+            get {
+                return ResourceManager.GetString("StoreNotICheckStore", resourceCulture);
             }
         }
     }
