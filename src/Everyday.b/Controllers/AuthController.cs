@@ -31,7 +31,7 @@ namespace Everyday.b.Controllers
 
             var result = await _userManager.CreateAsync(model);
             if (result.Succeeded)
-                return Ok();
+                return NoContent();
             return BadRequest(result.Errors);
         }
 
