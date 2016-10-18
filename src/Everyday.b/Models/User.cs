@@ -11,6 +11,9 @@ namespace Everyday.b.Models
         public bool EmailConfirmed { get; set; }
         public string Token { get; set; }
         public DateTime TokenExpires { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpires { get; set; }
+
         public string SecurityStamp { get; set; } = Guid.NewGuid().ToString();
         public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
         public int AccessFailedCount { get; set; }

@@ -130,5 +130,14 @@ namespace Everyday.b {
                 return ResourceManager.GetString("StoreNotICheckStore", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///    查找与 Token validate failed. 类似的本地化字符串。
+        /// </summary>
+        public static string ValidateFailed {
+            get {
+                return ResourceManager.GetString("ValidateFailed", resourceCulture);
+            }
+        }
     }
 }

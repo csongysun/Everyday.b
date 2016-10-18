@@ -25,4 +25,10 @@ namespace Everyday.b.Models
         [Required]
         public string Password { get; set; }
     }
+
+    public class TokenRefreshModel
+    {
+        [Required]
+        public string refresh_token { get; set; }
+    }
 }

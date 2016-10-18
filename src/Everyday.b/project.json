@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "Microsoft.NETCore.App": "1.0.1",
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.2",
     "Microsoft.AspNetCore.Mvc": "1.0.1",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
@@ -32,7 +31,7 @@
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
-          "version": "1.0.1"
+          "version": "1.0.0"
         }
       },
       "imports": "dnxcore50"
@@ -40,6 +39,7 @@
   },
 
   "buildOptions": {
+    "debugType": "portable",
     "emitEntryPoint": true,
     "preserveCompilationContext": true
   },
@@ -52,9 +52,6 @@
 
   "publishOptions": {
     "include": [
-      "wwwroot",
-      "Views",
-      "Areas/**/Views",
       "appsettings.json",
       "web.config"
     ]

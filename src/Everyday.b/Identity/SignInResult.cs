@@ -8,9 +8,11 @@ using Everyday.b.Models;
 
 namespace Everyday.b.Identity
 {
-    public class SignInResult :TaskResult<User>
+    public static class SignInResult
     {
-        public static SignInResult PwdNotCorrect => new SignInResult { Errors = new List<Error> { ErrorDescriber.PwdNotCorrect} };
+        public static TaskResult PwdNotCorrect => TaskResult.Failed(ErrorDescriber.PwdNotCorrect);
+        public static TaskResult ValidateFailed => TaskResult.Failed(ErrorDescriber.ValidateFailed);
+        public static TaskResult<User> Success(User user) => TaskResult<User>.Success(user);
     }
 
 
@@ -25,7 +27,13 @@ namespace Everyday.b.Common
             Code = nameof(PwdNotCorrect),
             Description = Resource.PwdNotCorrect
         };
+        public static Error ValidateFailed => new Error
+        {
+            Code = nameof(ValidateFailed),
+            Description = Resource.ValidateFailed
+        };
     }
+
 }
     
 

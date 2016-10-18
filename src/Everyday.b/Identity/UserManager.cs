@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Everyday.b.Common;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Everyday.b.Identity
 {
-    public class UserManager: IDisposable
+    public class UserManager : IDisposable
     {
         private readonly IUserStore _store;
         private readonly ITokenProvider _tokenProvider;
@@ -18,13 +19,14 @@ namespace Everyday.b.Identity
         private bool _disposed;
 
         public UserManager(IUserStore store,
-             ITokenProvider tokenProvider,
-             IPasswordHasher passwordHasher)
+            ITokenProvider tokenProvider,
+            IPasswordHasher passwordHasher)
         {
             _store = store;
             _tokenProvider = tokenProvider;
             _passwordHasher = passwordHasher;
         }
+
         private readonly HttpContext _context;
         private CancellationToken CancellationToken => _context?.RequestAborted ?? CancellationToken.None;
 
@@ -46,6 +48,7 @@ namespace Everyday.b.Identity
         {
             user.SecurityStamp = Guid.NewGuid().ToString();
         }
+
         public async Task<TaskResult> UpdateSecurityStampAsync(User user)
         {
             UpdateSecurityStamp(user);
@@ -60,17 +63,16 @@ namespace Everyday.b.Identity
             return await _store.UpdateAsync(user, CancellationToken);
         }
 
-        public async Task<TaskResult> PasswordSignInAsync(string key,string password, string authenticationMethod = null)
+        public async Task<TaskResult> PasswordSignInAsync(string key, string password,
+            string authenticationMethod = null)
         {
+            ThrowIfDisposed();
             var user = await FindByEmailAsync(key);
-            if (CheckPassword(user, password))
-            {
-                var result = await SignInAsync(user);
-                return !result.Succeeded ? TaskResult.Failed(result.Errors) : SignInResult.Success(user);
-            }
-
-            return SignInResult.PwdNotCorrect;
+            if (!CheckPassword(user, password)) return SignInResult.PwdNotCorrect;
+            var result = await SignInAsync(user);
+            return !result.Succeeded ? TaskResult.Failed(result.Errors) : SignInResult.Success(user);
         }
+
         public virtual bool CheckPassword(User user, string password)
         {
             ThrowIfDisposed();
@@ -88,11 +90,42 @@ namespace Everyday.b.Identity
             }
             return true;
         }
+
         public async Task<TaskResult> SignInAsync(User user, string authenticationMethod = null)
         {
             UpdateSecurityStamp(user);
             UpdateToken(user);
+            UpdateRefreshToken(user);
             return await UpdateUserAsync(user);
+        }
+
+        public async Task<TaskResult> TokenRefresh(string refreshToken)
+        {
+            ClaimsPrincipal principal;
+            try
+            {
+                principal = _tokenProvider.ValidateRefreshToken(refreshToken);
+
+            }
+            catch (Exception)
+            {
+                return SignInResult.ValidateFailed;
+            }
+
+            var securityStamp = principal.Claims.Where(c => c.Type == "principal")
+                .Select(c => c.Value).FirstOrDefault();
+            var id = principal.Identity.Name;
+            var user = await FindByIdAsync(id);
+            if (user.SecurityStamp != securityStamp) return SignInResult.ValidateFailed;
+            DateTime expireTime;
+            user.Token = _tokenProvider.GenerateToken(user, out expireTime);
+            user.TokenExpires = expireTime;
+            return SignInResult.Success(user);
+        }
+
+        public async Task<User> FindByIdAsync(string id)
+        {
+            return await _store.FindByIdAsync(id, CancellationToken);
         }
 
         public async Task<User> FindByEmailAsync(string email)
@@ -115,6 +148,17 @@ namespace Everyday.b.Identity
         public async Task<TaskResult> UpdateTokenAsync(User user)
         {
             UpdateToken(user);
+            return await UpdateUserAsync(user);
+        }
+        private void UpdateRefreshToken(User user)
+        {
+            DateTime expireTime;
+            user.RefreshToken = _tokenProvider.GenerateRefreshToken(user, out expireTime);
+            user.RefreshTokenExpires = expireTime;
+        }
+        public async Task<TaskResult> UpdateRefreshTokenAsync(User user)
+        {
+            UpdateRefreshToken(user);
             return await UpdateUserAsync(user);
         }
 

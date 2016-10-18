@@ -145,4 +145,7 @@
   <data name="StoreNotICheckStore" xml:space="preserve">
     <value>Not ICheckStore.</value>
   </data>
+  <data name="ValidateFailed" xml:space="preserve">
+    <value>Token validate failed.</value>
+  </data>
 </root>

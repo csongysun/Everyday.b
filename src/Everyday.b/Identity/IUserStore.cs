@@ -14,6 +14,7 @@ namespace Everyday.b.Identity
         Task<TaskResult> CreateAsync(User user, CancellationToken cancellationToken);
         Task<TaskResult> UpdateAsync(User user, CancellationToken cancellationToken);
         //Task<TaskResult> FindByNameAsync(string userName, CancellationToken cancellationToken);
+        Task<User> FindByIdAsync(string id, CancellationToken cancellationToken);
         Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken);
         Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken);
     }

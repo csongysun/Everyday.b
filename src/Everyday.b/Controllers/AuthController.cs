@@ -50,9 +50,31 @@ namespace Everyday.b.Controllers
                 user.UserName,
                 user.Email,
                 user.Token,
-                user.TokenExpires
+                user.TokenExpires,
+                user.RefreshToken,
+                user.RefreshTokenExpires
             });
         }
 
+        [HttpGet("refresh")]
+        public async Task<ActionResult> TokenRefresh([FromQuery]TokenRefreshModel model)
+        {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest(new[] { ErrorDescriber.ModelNotValid });
+            var result = await _userManager.TokenRefresh(model.refresh_token);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+            var user = result.Obj as User;
+            if (user == null) return BadRequest(new[] { ErrorDescriber.DefaultError });
+            return Ok(new
+            {
+                user.UserName,
+                user.Email,
+                user.Token,
+                user.TokenExpires,
+                user.RefreshToken,
+                user.RefreshTokenExpires
+            });
+        }
     }
 }

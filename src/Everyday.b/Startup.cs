@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Everyday.b
@@ -27,6 +29,7 @@ namespace Everyday.b
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddJsonFile("config.json", optional: true, reloadOnChange: true);
 
+
             if (env.IsEnvironment("Development"))
             {
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
@@ -35,6 +38,11 @@ namespace Everyday.b
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+
+            //ChangeToken.OnChange(() => Configuration.GetReloadToken(), () =>
+            //{
+
+            //});
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -75,6 +83,7 @@ namespace Everyday.b
                 app.UseDatabaseErrorPage();
             }
 
+            
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("JwtOptions").GetValue<string>("SecretKey")));
             var tokenValidationParameters = new TokenValidationParameters
             {

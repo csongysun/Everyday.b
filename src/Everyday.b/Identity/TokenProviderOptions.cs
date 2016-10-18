@@ -16,6 +16,8 @@ namespace Everyday.b.Identity
 
         public double Expiration { get; set; }
 
+        public double RefreshTokenExpiration { get; set; }
+
         //public SigningCredentials SigningCredentials { get; set; } = new SigningCredentials();
     }
 

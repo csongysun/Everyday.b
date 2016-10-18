@@ -44,6 +44,12 @@ namespace Everyday.b.Identity
             return Task.FromResult(user.PasswordHash);
         }
 
+        public Task<User> FindByIdAsync(string id, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            return Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        }
         public Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
