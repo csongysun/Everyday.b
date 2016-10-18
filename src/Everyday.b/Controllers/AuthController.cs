@@ -76,5 +76,11 @@ namespace Everyday.b.Controllers
                 user.RefreshTokenExpires
             });
         }
+
+        [HttpGet("test")]
+        public ActionResult Test()
+        {
+            return Ok("Ok");
+        }
     }
 }
