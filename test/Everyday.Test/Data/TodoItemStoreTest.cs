@@ -50,7 +50,7 @@ namespace Everyday.Test.Data
             };
             var user = new User
             {
-                UserName = "u0001",
+                Nickname = "u0001",
                 Email = "email"
             };
 

@@ -47,7 +47,7 @@ namespace Everyday.b.Controllers
             if (user == null) return BadRequest(new[] {ErrorDescriber.DefaultError});
             return Ok(new
             {
-                user.UserName,
+                user.Nickname,
                 user.Email,
                 user.Token,
                 user.TokenExpires,
@@ -68,7 +68,7 @@ namespace Everyday.b.Controllers
             if (user == null) return BadRequest(new[] { ErrorDescriber.DefaultError });
             return Ok(new
             {
-                user.UserName,
+                user.Nickname,
                 user.Email,
                 user.Token,
                 user.TokenExpires,

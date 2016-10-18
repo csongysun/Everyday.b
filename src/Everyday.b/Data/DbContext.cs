@@ -28,10 +28,9 @@ namespace Everyday.b.Data
             builder.Entity<User>(b =>
             {
                 b.HasKey(u => u.Id);
-                b.HasIndex(u => u.UserName).HasName("UserNameIndex");
                 b.HasIndex(u => u.Email).HasName("EmailIndex").IsUnique();
                 b.Property(u => u.ConcurrencyStamp).IsConcurrencyToken();
-                b.Property(u => u.UserName).HasMaxLength(256);
+                b.Property(u => u.Nickname).HasMaxLength(256);
                 b.Property(u => u.Email).HasMaxLength(256);
 
                 b.HasMany(u => u.TodoItems)

@@ -34,7 +34,7 @@ namespace Everyday.b.Identity
         {
             var user = new User
             {
-                UserName = model.UserName,
+                Nickname = model.Nickname,
                 Email = model.Email
             };
             var result = await ValidateUser(user);
