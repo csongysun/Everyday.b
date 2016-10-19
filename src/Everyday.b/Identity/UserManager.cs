@@ -112,14 +112,17 @@ namespace Everyday.b.Identity
                 return SignInResult.ValidateFailed;
             }
 
-            var securityStamp = principal.Claims.Where(c => c.Type == "principal")
+            var securityStamp = principal.Claims.Where(c => c.Type == "SecurityStamp")
                 .Select(c => c.Value).FirstOrDefault();
             var id = principal.Identity.Name;
             var user = await FindByIdAsync(id);
             if (user.SecurityStamp != securityStamp) return SignInResult.ValidateFailed;
-            DateTime expireTime;
-            user.Token = _tokenProvider.GenerateToken(user, out expireTime);
-            user.TokenExpires = expireTime;
+            if ((user.TokenExpires - DateTime.Now) < TimeSpan.FromDays(1))
+            {
+                DateTime expireTime;
+                user.Token = _tokenProvider.GenerateToken(user, out expireTime);
+                user.TokenExpires = expireTime;
+            }
             return SignInResult.Success(user);
         }
 
