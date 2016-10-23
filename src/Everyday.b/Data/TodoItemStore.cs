@@ -45,8 +45,8 @@ namespace Everyday.b.Data
             await SaveChanges(cancellationToken);
             return TaskResult.Success;
         }
-        public async Task<TaskResult> RemoveByIdAsync<T>(string id,
-            CancellationToken cancellationToken = default(CancellationToken)) where T:Entity
+        public async Task<TaskResult> DeleteByIdAsync<T>(string id,
+            CancellationToken cancellationToken = default(CancellationToken)) where T:Entity, new()
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -54,38 +54,47 @@ namespace Everyday.b.Data
             {
                 throw new ArgumentNullException(nameof(id));
             }
-            var item = Context.Set<T>().FirstOrDefault(t => t.Id.Equals(id));
-            if (item == null)
-            {
-                return TaskResult.Failed(ErrorDescriber.EntityNotFound);
-            }
-            Context.Set<T>().Remove(item);
+            var item = new T {Id = id};
+            Context.Entry(item).State = EntityState.Deleted;
             await SaveChanges(cancellationToken);
             return TaskResult.Success;
         }
-
-        public async Task<TaskResult> UpdateAsync(TodoItem item,
+        public async Task<TaskResult> DeleteAsync(string itemId, string userId, 
             CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (item == null)
+            if (string.IsNullOrEmpty(itemId) || string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException();
             }
-
-            Context.Attach(item);
-            Context.Update(item);
-            try
+            using (Context.Database.BeginTransaction())
             {
-                await SaveChanges(cancellationToken);
+                var result = await
+                    Context.Database.ExecuteSqlCommandAsync(
+                        $"DELETE FROM TodoItems WHERE Id = {itemId} AND UserId = {userId}", cancellationToken);
+                if(result != 1) return EntityResult.EntityNotFound;
+                await Context.Database.ExecuteSqlCommandAsync(
+                            $"DELETE FROM Checks WHERE TodoItemId = {itemId}", cancellationToken);
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                return TaskResult.Failed(ErrorDescriber.ConcurrencyFailure);
-            }
+            
             return TaskResult.Success;
         }
+        public async Task<TaskResult> DeleteAsync<T>(T entity,
+    CancellationToken cancellationToken = default(CancellationToken)) where T:Entity
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            Context.Remove(entity);
+            await SaveChanges(cancellationToken);
+            return TaskResult.Success;
+        }
+
+        
         public async Task<TaskResult> UpdateAsync(Check check, 
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -95,8 +104,6 @@ namespace Everyday.b.Data
             {
                 throw new ArgumentNullException(nameof(check));
             }
-
-            Context.Attach(check);
             Context.Update(check);
             try
             {
@@ -109,7 +116,48 @@ namespace Everyday.b.Data
             return TaskResult.Success;
         }
 
+        public async Task<TaskResult> UpdateAsync(TodoItem item, string userId,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+            int result;
+            using (Context.Database.BeginTransaction())
+            {
+                result =
+                    await
+                        Context.Database.ExecuteSqlCommandAsync(
+                            $"UPDATE TodoItems SET Title = '{item.Title}', BeginDate = '{item.BeginDate}', EndDate = '{item.EndDate}' WHERE Id = {item.Id} AND UserId = {userId}", cancellationToken);
 
+            }
+            return result == 1 ? TaskResult.Success : EntityResult.EntityNotFound;
+        }
+
+        public async Task<TaskResult> UpdateAsync<T>(T entity, CancellationToken cancellationToken) where T : Entity
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            //Context.Attach(entity);
+            // ConcurrencyStamp update
+            Context.Update(entity);
+            try
+            {
+                await SaveChanges(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return TaskResult.Failed(ErrorDescriber.ConcurrencyFailure);
+            }
+            return TaskResult.Success;
+        }
 
         public Task<T> FindById<T>(string id,
             CancellationToken cancellationToken = default(CancellationToken)) where T:Entity

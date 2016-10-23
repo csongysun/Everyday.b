@@ -39,15 +39,32 @@ namespace Everyday.b.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{itemId}")]
         public async Task<ActionResult> Delete(string itemId)
         {
-            var result = await _todoManager.DeleteItemAsync(itemId);
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return BadRequest(new[] { ErrorDescriber.ModelNotValid });
+            }
+            var userId = User.Identity.Name;
+            var result = await _todoManager.DeleteItemAsync(itemId, userId);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
             return NoContent();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> Update([FromBody] TodoItemModel model)
+        {
+            if (string.IsNullOrEmpty(model?.Id) || !ModelState.IsValid )
+                return BadRequest(new[] { ErrorDescriber.ModelNotValid });
+            var userId = User.Identity.Name;
+            var result = await _todoManager.UpdateItemAsync(model, userId);
+
+
+            return Ok();
         }
 
         [HttpGet]
@@ -66,7 +83,8 @@ namespace Everyday.b.Controllers
         [HttpGet("{itemId}")]
         public async Task<ActionResult> Check(string itemId)
         {
-            var result = await _todoManager.Check(itemId);
+            var userId = User.Identity.Name;
+            var result = await _todoManager.Check(itemId, userId);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
             return NoContent();

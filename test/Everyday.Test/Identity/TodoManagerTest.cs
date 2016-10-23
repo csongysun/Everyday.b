@@ -21,7 +21,8 @@ namespace Everyday.Test.Identity
 
             var securityStamp = principal.Claims.Where(c => c.Type == "SecurityStamp")
                 .Select(c => c.Value).FirstOrDefault();
-            
         }
+
+
     }
 }

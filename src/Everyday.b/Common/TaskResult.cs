@@ -54,4 +54,11 @@ namespace Everyday.b.Common
         }
 
     }
+
+
+    public static class EntityResult
+    {
+        public static TaskResult EntityNotFound => TaskResult.Failed(ErrorDescriber.ItemNotFound);
+    }
+
 }

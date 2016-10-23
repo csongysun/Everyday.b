@@ -5,6 +5,7 @@
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
     "System.Diagnostics.TraceSource": "4.0.0",
+    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.1",
     "Microsoft.EntityFrameworkCore.InMemory": "1.1.0-alpha1-22078",
     "Everyday.b": "1.0.0-*",
     "dotnet-test-xunit": "2.2.0-preview2-build1029"
