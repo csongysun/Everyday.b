@@ -198,23 +198,37 @@ namespace Everyday.b.Data
 
         public async Task<TaskResult> CheckAsync(string itemId, CancellationToken cancellationToken)
         {
-            Context.Database.CommitTransaction();
-
-            var nday = DateTime.Today.AddDays(1);
-            var check = await Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken);
-
-            if (check == null)
+            //Context.Database.CommitTransaction();
+            using (Context.Database.BeginTransaction())
             {
-                check = new Check
+                var nday = DateTime.Today.AddDays(1);
+                var check = await Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken);
+
+                if (check == null)
                 {
-                    Checked = true,
-                    CheckedDate = DateTime.Today,
-                    TodoItemId = itemId
-                };
-                return await CreateAsync(check, cancellationToken);
+                    check = new Check
+                    {
+                        Checked = true,
+                        CheckedDate = DateTime.Today,
+                        TodoItemId = itemId
+                    };
+                    return await CreateAsync(check, cancellationToken);
+                }
+                check.Checked = !check.Checked;
+                return await UpdateAsync(check, cancellationToken);
             }
-            check.Checked = !check.Checked;
-            return await UpdateAsync(check, cancellationToken);
+            
+        }
+
+        public async Task<bool> PermissionCheckAsync(string itemId, string userId, CancellationToken cancellationToken)
+        {
+            using (Context.Database.BeginTransaction())
+            {
+                if (await TodoItems.AnyAsync(t => t.Id == itemId && t.UserId == userId, cancellationToken))
+                    return true;
+                return false;
+            }
+
         }
 
         public IQueryable<Check> Checks => Context.Set<Check>();

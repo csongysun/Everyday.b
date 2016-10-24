@@ -77,10 +77,10 @@ namespace Everyday.b.Services
 
         public async Task<TaskResult> Check(string itemId, string userId)
         {
-            
-            if (!await _store.TodoItems.AnyAsync(t => t.Id == itemId && t.UserId == userId, CancellationToken))
+            if (!await _store.PermissionCheckAsync(itemId, userId, CancellationToken))
+            {
                 return EntityResult.EntityNotFound;
-
+            }
             var checkStore = GetCheckStore();
             return await checkStore.CheckAsync(itemId, CancellationToken);
 

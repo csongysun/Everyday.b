@@ -13,8 +13,8 @@ namespace Everyday.b.Data
         IQueryable<TodoItem> TodoItems { get; }
         Task<TaskResult> CreateAsync(TodoItem item, CancellationToken cancellationToken);
         Task<TaskResult> DeleteAsync(string itemId, string userId, CancellationToken cancellationToken);
-
         Task<TaskResult> UpdateAsync(TodoItem item, string userId, CancellationToken cancellationToken);
+        Task<bool> PermissionCheckAsync(string itemId, string userId, CancellationToken cancellationToken);
     }
 
     public interface ICheckStore : IDisposable, IEntityStore
