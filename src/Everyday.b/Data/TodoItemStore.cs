@@ -198,7 +198,7 @@ namespace Everyday.b.Data
 
         public async Task<TaskResult> CheckAsync(string itemId, CancellationToken cancellationToken)
         {
-            //Context.Database.CommitTransaction();
+            Context.Database.CommitTransaction();
             using (Context.Database.BeginTransaction())
             {
                 var nday = DateTime.Today.AddDays(1);
