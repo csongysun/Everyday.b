@@ -196,6 +196,25 @@ namespace Everyday.b.Data
             _disposed = true;
         }
 
+        public async Task<TaskResult> CheckAsync(string itemId, CancellationToken cancellationToken)
+        {
+            var nday = DateTime.Today.AddDays(1);
+            var check = await Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken);
+
+            if (check == null)
+            {
+                check = new Check
+                {
+                    Checked = true,
+                    CheckedDate = DateTime.Today,
+                    TodoItemId = itemId
+                };
+                return await CreateAsync(check, cancellationToken);
+            }
+            check.Checked = !check.Checked;
+            return await UpdateAsync(check, cancellationToken);
+        }
+
         public IQueryable<Check> Checks => Context.Set<Check>();
 
     }

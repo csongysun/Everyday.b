@@ -77,33 +77,12 @@ namespace Everyday.b.Services
 
         public async Task<TaskResult> Check(string itemId, string userId)
         {
+
             if (!await _store.TodoItems.AnyAsync(t => t.Id == itemId && t.UserId == userId, CancellationToken))
                 return EntityResult.EntityNotFound;
             var checkStore = GetCheckStore();
-            var nday = DateTime.Today.AddDays(1);
-            var iId = itemId;
-            var check = await checkStore.Checks.FirstOrDefaultAsync(c => c.TodoItemId == iId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken: CancellationToken);
+            return await checkStore.CheckAsync(itemId, CancellationToken);
 
-            var q = from c in checkStore.Checks
-                where _store.TodoItems.Any(t => t.Id == itemId && t.UserId == userId)
-                select c;
-
-            check = await 
-                q.FirstOrDefaultAsync(
-                    c => c.TodoItemId == iId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday);
-
-            if (check == null)
-            {
-                check = new Check
-                {
-                    Checked = true,
-                    CheckedDate = DateTime.Today,
-                    TodoItemId = itemId
-                };
-                return await checkStore.CreateAsync(check, CancellationToken);
-            }
-            check.Checked = !check.Checked;
-            return await checkStore.UpdateAsync(check, CancellationToken);
         }
 
         private ICheckStore GetCheckStore()

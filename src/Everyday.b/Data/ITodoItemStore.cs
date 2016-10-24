@@ -22,6 +22,7 @@ namespace Everyday.b.Data
         IQueryable<Check> Checks { get; }
         Task<TaskResult> UpdateAsync(Check check, CancellationToken cancellationToken);
         Task<TaskResult> CreateAsync(Check check, CancellationToken cancellationToken);
+        Task<TaskResult> CheckAsync(string itemId, CancellationToken cancellationToken);
 
     }
 
