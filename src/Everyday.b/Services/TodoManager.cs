@@ -7,6 +7,7 @@ using Everyday.b.Common;
 using Everyday.b.Data;
 using Everyday.b.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace Everyday.b.Services
@@ -80,7 +81,17 @@ namespace Everyday.b.Services
                 return EntityResult.EntityNotFound;
             var checkStore = GetCheckStore();
             var nday = DateTime.Today.AddDays(1);
-            var check = await checkStore.Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken: CancellationToken);
+            var iId = itemId;
+            var check = await checkStore.Checks.FirstOrDefaultAsync(c => c.TodoItemId == iId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken: CancellationToken);
+
+            var q = from c in checkStore.Checks
+                where _store.TodoItems.Any(t => t.Id == itemId && t.UserId == userId)
+                select c;
+
+            check = await 
+                q.FirstOrDefaultAsync(
+                    c => c.TodoItemId == iId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday);
+
             if (check == null)
             {
                 check = new Check

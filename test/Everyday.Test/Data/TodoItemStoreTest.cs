@@ -99,8 +99,6 @@ namespace Everyday.Test.Data
                 await context.AddAsync(item);
                 context.SaveChanges();
 
-                await ts.RemoveAsync(item2);
-
                 context.SaveChanges();
 
                 var users = context.Users;
