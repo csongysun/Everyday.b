@@ -244,7 +244,7 @@ namespace Everyday.b.Data
 
             return
                 await
-                    TodoItems.FromSql($"SELECT * FROM dbo.TodoItems AS t WHERE t.UserId = '{userId}' AND t.BeginDate <= {datesql} AND t.EndDate >= {datesql}")
+                    TodoItems.FromSql($"SELECT * FROM TodoItems WHERE UserId = '{userId}' AND BeginDate <= {datesql} AND EndDate >= {datesql}")
                         //.Where(t => t.UserId == id && t.BeginDate <= date.Date && t.EndDate >= date.Date)
                         .Include(t => t.Checks)
                         .ToListAsync(cancellationToken);
