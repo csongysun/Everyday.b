@@ -61,9 +61,12 @@ namespace Everyday.b.Services
 
         public async Task<IList<TodoItem>> GetTodayItems(string id, DateTime date)
         {
+            string datesql = $"make_date({date.Year},{date.Month},{date.Day})";
+
             return
                 await
-                    _store.TodoItems.Where(t => t.UserId == id && t.BeginDate.Date <= date.Date && t.EndDate.Date >= date.Date)
+                    _store.TodoItems.FromSql($"SELECT * FROM TodoItems AS t WHERE t.UserId = '{id}' AND t.BeginDate <= {datesql} AND t.EndDate >= {datesql}")
+                    //.Where(t => t.UserId == id && t.BeginDate <= date.Date && t.EndDate >= date.Date)
                         .Include(t => t.Checks)
                         .ToListAsync(CancellationToken);
         }
