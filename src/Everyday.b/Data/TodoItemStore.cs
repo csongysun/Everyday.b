@@ -77,10 +77,10 @@ namespace Everyday.b.Data
                 {
                     var result = await
                     Context.Database.ExecuteSqlCommandAsync(
-                        $"DELETE FROM TodoItems WHERE Id = '{itemId}' AND UserId = '{userId}'", cancellationToken);
+                        $"DELETE FROM \"TodoItems\" WHERE \"Id\" = \"{itemId}\" AND \"UserId\" = \"{userId}\"", cancellationToken);
                     if (result != 1) return EntityResult.EntityNotFound;
                     await Context.Database.ExecuteSqlCommandAsync(
-                                $"DELETE FROM Checks WHERE TodoItemId = '{itemId}'", cancellationToken);
+                                $"DELETE FROM \"Checks\" WHERE \"TodoItemId\" = \"{itemId}\"", cancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -240,8 +240,9 @@ namespace Everyday.b.Data
         public async Task<IList<TodoItem>> GetItemsByDate(string userId, DateTime date,
             CancellationToken cancellationToken)
         {
-            return await TodoItems.Where(t => t.UserId == userId).Where(t => t.BeginDate <= date && t.EndDate >= date)
-                .Include(t => t.Checks).ToListAsync(cancellationToken);
+            return await TodoItems.Include(t => t.Checks)
+                .Where(t => t.UserId == userId).Where(t => t.BeginDate <= date && t.EndDate >= date)
+                .ToListAsync(cancellationToken);
 
             //string datesql = $"make_date({date.Year},{date.Month},{date.Day})";
             //return
