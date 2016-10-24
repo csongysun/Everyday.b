@@ -243,9 +243,9 @@ namespace Everyday.b.Data
             string datesql = $"make_date({date.Year},{date.Month},{date.Day})";
             return
                 await
-                    TodoItems.FromSql("SELECT * FROM {0} WHERE UserId = {1} ", "TodoItems", userId )
+                    TodoItems.FromSql($"SELECT * FROM \"TodoItems\" WHERE \"UserId\" = \"{userId}\" AND \"BeginDate\" <= \"{datesql}\" AND \"EndDate\" >= \"{datesql}\"")
                         //.Where(t => t.UserId == id && t.BeginDate <= date.Date && t.EndDate >= date.Date)
-                       // .Include(t => t.Checks)
+                        .Include(t => t.Checks)
                         .ToListAsync(cancellationToken);
         }
 
