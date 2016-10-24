@@ -198,6 +198,8 @@ namespace Everyday.b.Data
 
         public async Task<TaskResult> CheckAsync(string itemId, CancellationToken cancellationToken)
         {
+            Context.Database.CommitTransaction();
+
             var nday = DateTime.Today.AddDays(1);
             var check = await Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken);
 
