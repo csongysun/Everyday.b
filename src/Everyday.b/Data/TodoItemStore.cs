@@ -222,11 +222,11 @@ namespace Everyday.b.Data
 
         public async Task<bool> PermissionCheckAsync(string itemId, string userId, CancellationToken cancellationToken)
         {
-            using (Context.Database.BeginTransaction())
+            using (var tt = Context.Database.BeginTransaction())
             {
-                if (await TodoItems.AnyAsync(t => t.Id == itemId && t.UserId == userId, cancellationToken))
-                    return true;
-                return false;
+                bool r = await TodoItems.AnyAsync(t => t.Id == itemId && t.UserId == userId, cancellationToken);
+                tt.Commit();
+                return r;
             }
 
         }
