@@ -240,13 +240,16 @@ namespace Everyday.b.Data
         public async Task<IList<TodoItem>> GetItemsByDate(string userId, DateTime date,
             CancellationToken cancellationToken)
         {
-            string datesql = $"make_date({date.Year},{date.Month},{date.Day})";
-            return
-                await
-                    TodoItems.Include(t => t.Checks).FromSql($"SELECT * FROM \"TodoItems\" WHERE \"UserId\" = \"{userId}\" AND \"BeginDate\" <= \"{datesql}\" AND \"EndDate\" >= \"{datesql}\"")
-                        //.Where(t => t.UserId == id && t.BeginDate <= date.Date && t.EndDate >= date.Date)
+            return await TodoItems.Where(t => t.UserId == userId).Where(t => t.BeginDate <= date && t.EndDate >= date)
+                .Include(t => t.Checks).ToListAsync(cancellationToken);
+
+            //string datesql = $"make_date({date.Year},{date.Month},{date.Day})";
+            //return
+            //    await
+            //        TodoItems.Include(t => t.Checks).FromSql($"SELECT * FROM \"TodoItems\" WHERE \"UserId\" = \"{userId}\" AND \"BeginDate\" <= \"{datesql}\" AND \"EndDate\" >= \"{datesql}\"")
+            //            //.Where(t => t.UserId == id && t.BeginDate <= date.Date && t.EndDate >= date.Date)
                        
-                        .ToListAsync(cancellationToken);
+            //            .ToListAsync(cancellationToken);
         }
 
         public IQueryable<Check> Checks => Context.Set<Check>();
