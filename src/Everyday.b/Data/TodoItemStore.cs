@@ -202,7 +202,13 @@ namespace Everyday.b.Data
             using (Context.Database.BeginTransaction())
             {
                 var nday = DateTime.Today.AddDays(1);
-                var check = await Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken);
+
+                string today = $"make_date({DateTime.Today.Year},{DateTime.Today.Month},{DateTime.Today.Day})";
+                var check =
+                    await Context.Checks.FromSql(
+                            $"SELECT * FROM Checks AS c WHERE c.TodoItemId = '{itemId}' AND c.CheckedDate = {today}")
+                        .FirstOrDefaultAsync(cancellationToken);
+                //var check = await Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate == DateTime.Today, cancellationToken);
 
                 if (check == null)
                 {
@@ -225,6 +231,7 @@ namespace Everyday.b.Data
             using (var tt = Context.Database.BeginTransaction())
             {
                 bool r = await TodoItems.AnyAsync(t => t.Id == itemId && t.UserId == userId, cancellationToken);
+                
                 tt.Commit();
                 return r;
             }
