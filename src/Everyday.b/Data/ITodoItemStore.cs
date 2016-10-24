@@ -23,7 +23,7 @@ namespace Everyday.b.Data
         Task<TaskResult> UpdateAsync(Check check, CancellationToken cancellationToken);
         Task<TaskResult> CreateAsync(Check check, CancellationToken cancellationToken);
         Task<TaskResult> CheckAsync(string itemId, CancellationToken cancellationToken);
-        Task<TaskResult> CheckAsync(TodoItem item, CancellationToken cancellationToken);
+        //Task<TaskResult> CheckAsync(TodoItem item, CancellationToken cancellationToken);
     }
 
     public interface IEntityStore
