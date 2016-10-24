@@ -79,7 +79,7 @@ namespace Everyday.b.Services
             if (!await _store.TodoItems.AnyAsync(t => t.Id == itemId && t.UserId == userId, CancellationToken))
                 return EntityResult.EntityNotFound;
             var checkStore = GetCheckStore();
-            var nday = DateTime.Today + TimeSpan.FromDays(1);
+            var nday = DateTime.Today.AddDays(1);
             var check = await checkStore.Checks.FirstOrDefaultAsync(c => c.TodoItemId == itemId && c.CheckedDate >= DateTime.Today && c.CheckedDate <= nday, cancellationToken: CancellationToken);
             if (check == null)
             {
