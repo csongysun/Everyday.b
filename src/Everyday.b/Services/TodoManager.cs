@@ -65,7 +65,7 @@ namespace Everyday.b.Services
 
             return
                 await
-                    _store.TodoItems.FromSql($"SELECT * FROM TodoItems AS t WHERE t.UserId = '{id}' AND t.BeginDate <= {datesql} AND t.EndDate >= {datesql}")
+                    _store.TodoItems.FromSql($"SELECT * FROM [TodoItems] AS t WHERE t.UserId = '{id}' AND t.BeginDate <= {datesql} AND t.EndDate >= {datesql}")
                     //.Where(t => t.UserId == id && t.BeginDate <= date.Date && t.EndDate >= date.Date)
                         .ToListAsync(CancellationToken);
         }
