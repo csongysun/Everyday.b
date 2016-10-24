@@ -245,7 +245,7 @@ namespace Everyday.b.Data
                 await
                     TodoItems.FromSql("SELECT * FROM {0} WHERE UserId = {1} ", "TodoItems", userId )
                         //.Where(t => t.UserId == id && t.BeginDate <= date.Date && t.EndDate >= date.Date)
-                        .Include(t => t.Checks)
+                       // .Include(t => t.Checks)
                         .ToListAsync(cancellationToken);
         }
 
