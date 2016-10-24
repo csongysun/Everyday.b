@@ -62,9 +62,11 @@ namespace Everyday.b.Controllers
                 return BadRequest(new[] { ErrorDescriber.ModelNotValid });
             var userId = User.Identity.Name;
             var result = await _todoManager.UpdateItemAsync(model, userId);
-
-
-            return Ok();
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            return NoContent();
         }
 
         [HttpGet]

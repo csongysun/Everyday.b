@@ -22,7 +22,7 @@ namespace Everyday.b.Data
         public IQueryable<TodoItem> TodoItems => Context.Set<TodoItem>();
 
 
-        public async Task<TaskResult> CreateAsync(TodoItem item, 
+        public async Task<TaskResult> CreateAsync(TodoItem item,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -32,6 +32,7 @@ namespace Everyday.b.Data
             await SaveChanges(cancellationToken);
             return TaskResult.Success;
         }
+
         public async Task<TaskResult> CreateAsync(Check check,
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -45,8 +46,9 @@ namespace Everyday.b.Data
             await SaveChanges(cancellationToken);
             return TaskResult.Success;
         }
+
         public async Task<TaskResult> DeleteByIdAsync<T>(string id,
-            CancellationToken cancellationToken = default(CancellationToken)) where T:Entity, new()
+            CancellationToken cancellationToken = default(CancellationToken)) where T : Entity, new()
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -59,7 +61,8 @@ namespace Everyday.b.Data
             await SaveChanges(cancellationToken);
             return TaskResult.Success;
         }
-        public async Task<TaskResult> DeleteAsync(string itemId, string userId, 
+
+        public async Task<TaskResult> DeleteAsync(string itemId, string userId,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -70,14 +73,20 @@ namespace Everyday.b.Data
             }
             using (Context.Database.BeginTransaction())
             {
-                var result = await
+                try
+                {
+                    var result = await
                     Context.Database.ExecuteSqlCommandAsync(
-                        $"DELETE FROM TodoItems WHERE Id = {itemId} AND UserId = {userId}", cancellationToken);
-                if(result != 1) return EntityResult.EntityNotFound;
-                await Context.Database.ExecuteSqlCommandAsync(
-                            $"DELETE FROM Checks WHERE TodoItemId = {itemId}", cancellationToken);
+                        $"DELETE FROM TodoItems WHERE Id = '{itemId}' AND UserId = '{userId}'", cancellationToken);
+                    if (result != 1) return EntityResult.EntityNotFound;
+                    await Context.Database.ExecuteSqlCommandAsync(
+                                $"DELETE FROM Checks WHERE TodoItemId = '{itemId}'", cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    return EntityResult.SqlFailed(e.Message);
+                }
             }
-            
             return TaskResult.Success;
         }
         public async Task<TaskResult> DeleteAsync<T>(T entity,

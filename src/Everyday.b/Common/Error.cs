@@ -43,6 +43,11 @@ namespace Everyday.b.Common
             Code = nameof(EntityNotFound),
             Description = Resource.EntityNotFound
         };
+        public static Error SqlFailed(string msg) => new Error
+        {
+            Code = nameof(SqlFailed),
+            Description = msg
+        };
     }
 
     

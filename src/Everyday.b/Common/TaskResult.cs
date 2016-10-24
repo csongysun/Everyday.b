@@ -59,6 +59,7 @@ namespace Everyday.b.Common
     public static class EntityResult
     {
         public static TaskResult EntityNotFound => TaskResult.Failed(ErrorDescriber.ItemNotFound);
+        public static TaskResult SqlFailed(string msg) => TaskResult.Failed(ErrorDescriber.SqlFailed(msg));
     }
 
 }
