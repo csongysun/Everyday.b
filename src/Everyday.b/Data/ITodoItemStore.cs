@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace Everyday.b.Data
         Task<TaskResult> DeleteAsync(string itemId, string userId, CancellationToken cancellationToken);
         Task<TaskResult> UpdateAsync(TodoItem item, string userId, CancellationToken cancellationToken);
         Task<bool> PermissionCheckAsync(string itemId, string userId, CancellationToken cancellationToken);
+        Task<IList<TodoItem>> GetItemsByDate(string userId, DateTime date, CancellationToken cancellationToken);
     }
 
     public interface ICheckStore : IDisposable, IEntityStore
